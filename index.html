@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>众包平台管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 100%;
+            padding: 15px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        
+        .stat-card .value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card .label {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 8px;
+        }
+        
+        .task-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .task-item {
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        
+        .task-item .count {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .task-item .sub-label {
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 2px;
+        }
+        
+        .task-item.pending .count { color: #ffc107; }
+        .task-item.accepted .count { color: #17a2b8; }
+        .task-item.completed .count { color: #28a745; }
+        .task-item.rejected .count { color: #dc3545; }
+        
+        .recent-orders {
+            margin-top: 15px;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        
+        .order-info .order-id {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        
+        .order-info .order-time {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .order-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-completed { background: #d4edda; color: #155724; }
+        .status-rejected { background: #f8d7da; color: #721c24; }
+        
+        .user-list {
+            margin-top: 15px;
+        }
+        
+        .user-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .user-item:last-child {
+            border-bottom: none;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        
+        .user-orders {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .refresh-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+        
+        .refresh-btn:hover {
+            background: #5a6fd8;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>众包平台管理系统</h1>
+            <p>实时数据监控平台</p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="value" id="userCount">0</div>
+                <div class="label">接单用户数</div>
+            </div>
+            <div class="stat-card">
+                <div class="value" id="todayOrders">0</div>
+                <div class="label">今日接单份数</div>
+            </div>
+            <div class="stat-card">
+                <div class="value" id="totalRevenue">¥0</div>
+                <div class="label">用户总收入</div>
+            </div>
+            <div class="stat-card">
+                <div class="value" id="platformFee">¥0</div>
+                <div class="label">今日收益</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">任务统计</div>
+            <div class="task-stats">
+                <div class="task-item pending">
+                    <div class="count" id="availableTasks">0</div>
+                    <div class="label">可接任务</div>
+                </div>
+                <div class="task-item accepted">
+                    <div class="count" id="acceptedTasks">0</div>
+                    <div class="label">已接任务</div>
+                </div>
+                <div class="task-item completed">
+                    <div class="count" id="completedTasks">0</div>
+                    <div class="label">已完成份数</div>
+                </div>
+                <div class="task-item rejected">
+                    <div class="count" id="rejectedTasks">0</div>
+                    <div class="label">已驳回份数</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">最近订单</div>
+            <div class="recent-orders" id="recentOrders">
+                <!-- 订单列表将通过JavaScript动态生成 -->
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">活跃用户</div>
+            <div class="user-list" id="userList">
+                <!-- 用户列表将通过JavaScript动态生成 -->
+            </div>
+        </div>
+        
+        <button class="refresh-btn" onclick="refreshData()">刷新数据</button>
+        
+        <div class="footer">
+            <p>最后更新: <span id="lastUpdate">--</span></p>
+        </div>
+    </div>
+
+    <script>
+        // 模拟数据生成器 - 基于真实业务逻辑
+        function generateMockData() {
+            const currentTime = new Date();
+            const today = currentTime.toISOString().slice(0, 10).replace(/-/g, '');
+            
+            // 基础参数
+            const userCount = Math.floor(Math.random() * 30) + 120; // 120-150个活跃用户
+            const tasksPerUser = Math.floor(Math.random() * 3) + 5; // 每个用户完成5-7个任务
+            const taskPriceRange = { min: 5, max: 20 }; // 任务价格5-20元
+            const commissionRate = (Math.random() * 0.1) + 0.15; // 平台抽佣15-25%
+            
+            // 计算核心数据
+            const todayOrders = userCount * tasksPerUser; // 今日总订单数
+            const totalRevenue = todayOrders * ((taskPriceRange.min + taskPriceRange.max) / 2); // 总收入
+            const platformFee = Math.floor(totalRevenue * commissionRate); // 平台抽佣
+            
+            // 任务相关数据
+            const availableTaskTypes = Math.floor(Math.random() * 30) + 50; // 50-80个可接任务
+            const taskCopies = [10, 20, 30, 50, 100]; // 每个任务的份数
+            const totalAvailableCopies = taskCopies.reduce((sum, copies) => sum + copies, 0); // 总可接份数
+            
+            // 用户接单情况（大多数用户接1单，少数接2单）
+            const acceptedCopiesPerUser = Math.random() > 0.7 ? 2 : 1; // 70%接1单，30%接2单
+            const totalAcceptedCopies = userCount * acceptedCopiesPerUser;
+            
+            // 任务完成情况（已完成+已驳回 ≈ 今日接单量）
+            const completedCopies = Math.floor(todayOrders * 0.85); // 85%完成
+            const rejectedCopies = Math.floor(todayOrders * 0.1); // 10%驳回
+            const pendingCopies = totalAcceptedCopies - completedCopies - rejectedCopies;
+            
+            return {
+                // 核心统计数据
+                userCount: userCount,
+                todayOrders: todayOrders,
+                totalRevenue: Math.floor(totalRevenue),
+                platformFee: platformFee,
+                
+                // 任务统计数据（按份数计算）
+                availableTasks: availableTaskTypes, // 可接任务类型数
+                availableCopies: totalAvailableCopies, // 可接总份数
+                acceptedTasks: totalAcceptedCopies, // 已接总份数
+                completedTasks: completedCopies, // 已完成份数
+                rejectedTasks: rejectedCopies, // 已驳回份数
+                pendingTasks: pendingCopies, // 待处理份数
+                
+                // 最近订单数据 - 时间越晚的订单编号越大
+                recentOrders: Array.from({length: 5}, (_, i) => {
+                    const orderTime = new Date(currentTime.getTime() - (4 - i) * 600000); // 调整时间顺序
+                    const taskPrice = Math.floor(Math.random() * (taskPriceRange.max - taskPriceRange.min + 1)) + taskPriceRange.min;
+                    return {
+                        id: `ORD${today}${String(orderTime.getTime()).slice(-6)}${4 - i}`, // 调整编号顺序
+                        time: orderTime.toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'}),
+                        status: ['pending', 'completed', 'rejected'][Math.floor(Math.random() * 3)],
+                        amount: taskPrice
+                    };
+                }),
+                
+                // 活跃用户数据
+                activeUsers: Array.from({length: 4}, (_, i) => {
+                    // 扩展用户名称库，确保能生成大量不重样的用户名
+                    const userNames = [
+                        // 英文名 + 数字
+                        'Alex_2024', 'Tom_2023', 'Jerry_88', 'Mike_007', 'John_123', 'David_456',
+                        'Lucy_789', 'Emma_2024', 'Sophia_88', 'Olivia_99', 'Lucas_2023', 'Ethan_66',
+                        'Mia_2024', 'Ava_2023', 'Noah_88', 'Liam_99', 'Isabella_2024', 'Charlotte_2023',
+                        
+                        // 手机号格式
+                        '138****5678', '135****1234', '139****8888', '136****9999', '137****6666',
+                        '150****7777', '151****5555', '152****4444', '153****3333', '155****2222',
+                        '156****1111', '157****0000', '158****9999', '159****8888', '170****7777',
+                        
+                        // 中文网名
+                        '小星星✨', '奔跑的蜗牛', '游戏玩家', '追风少年', '阳光正好', '梦想家',
+                        '快乐的小鸟', '奋斗的青春', '时光旅行者', '星空下的约定', '海边的风',
+                        '山间的云', '雨后的彩虹', '清晨的阳光', '夜晚的星光', '午后的咖啡',
+                        
+                        // 英文网名
+                        'TechMaster', 'Lucky_User', 'CodeNinja', 'DataWizard', 'AI_Explorer',
+                        'Future_Tech', 'Digital_Pioneer', 'Cloud_Rider', 'Byte_Builder', 'Pixel_Artist',
+                        'Game_Changer', 'Innovation_King', 'Smart_Worker', 'Quick_Learner', 'Fast_Tasker',
+                        
+                        // 混合类型
+                        'Leo_2024', 'Zoe_88', 'Max_007', 'Ruby_2023', 'Oscar_99', 'Lily_2024',
+                        'Jack_2023', 'Ella_88', 'Ryan_99', 'Grace_2024', 'Henry_2023', 'Chloe_88',
+                        'Dylan_99', 'Zara_2024', 'Luke_2023', 'Maya_88', 'Caleb_99', 'Nora_2024',
+                        
+                        // 更多手机号
+                        '131****1111', '132****2222', '133****3333', '134****4444', '186****6666',
+                        '187****7777', '188****8888', '189****9999', '166****6666', '199****9999',
+                        
+                        // 更多中文网名
+                        '追梦人', '奋斗者', '快乐源泉', '阳光男孩', '温柔女孩', '文艺青年',
+                        '技术宅', '游戏达人', '学习狂人', '工作狂魔', '生活家', '旅行者',
+                        '美食家', '摄影师', '音乐人', '画家', '作家', '程序员',
+                        
+                        // 更多英文网名
+                        'TaskMaster', 'WorkSmart', 'EarnFast', 'QuickMoney', 'EasyTask',
+                        'SimpleLife', 'HappyWorker', 'BusyBee', 'ProductiveDay', 'EfficientUser',
+                        'ReliableWorker', 'TrustedUser', 'TopPerformer', 'StarWorker', 'EliteUser'
+                    ];
+                    
+                    // 随机选择用户名，确保每次刷新都有不同的组合
+                    const randomIndex = Math.floor(Math.random() * userNames.length);
+                    const name = userNames[randomIndex];
+                    
+                    // 根据用户名生成头像首字母
+                    let avatar = name.charAt(0);
+                    if (avatar.match(/[0-9]/)) {
+                        avatar = name.substring(0, 2); // 如果是数字，取前两位
+                    } else if (avatar.match(/[\u4e00-\u9fa5]/)) {
+                        avatar = name.substring(0, 1); // 如果是中文，取第一个字
+                    }
+                    
+                    return {
+                        name: name,
+                        orders: Math.floor(Math.random() * 3) + 5, // 每个用户5-7单
+                        avatar: avatar
+                    };
+                })
+            };
+        }
+        
+        // 更新页面数据
+        function updateDashboard(data) {
+            // 更新核心统计数据
+            document.getElementById('userCount').textContent = data.userCount;
+            document.getElementById('todayOrders').textContent = data.todayOrders;
+            document.getElementById('totalRevenue').textContent = `¥${data.totalRevenue.toLocaleString()}`;
+            document.getElementById('platformFee').textContent = `¥${data.platformFee.toLocaleString()}`;
+            
+            // 更新任务统计数据
+            document.getElementById('availableTasks').textContent = data.availableTasks;
+            document.getElementById('acceptedTasks').textContent = data.acceptedTasks;
+            document.getElementById('completedTasks').textContent = data.completedTasks;
+            document.getElementById('rejectedTasks').textContent = data.rejectedTasks;
+            
+            // 更新最近订单
+            const ordersContainer = document.getElementById('recentOrders');
+            ordersContainer.innerHTML = data.recentOrders.map(order => `
+                <div class="order-item">
+                    <div class="order-info">
+                        <div class="order-id">订单 ${order.id}</div>
+                        <div class="order-time">${order.time} | ¥${order.amount}</div>
+                    </div>
+                    <div class="order-status status-${order.status}">
+                        ${order.status === 'pending' ? '待处理' : order.status === 'completed' ? '已完成' : '已驳回'}
+                    </div>
+                </div>
+            `).join('');
+            
+            // 更新活跃用户
+            const usersContainer = document.getElementById('userList');
+            usersContainer.innerHTML = data.activeUsers.map(user => `
+                <div class="user-item">
+                    <div class="user-avatar">${user.avatar}</div>
+                    <div class="user-info">
+                        <div class="user-name">${user.name}</div>
+                        <div class="user-orders">今日接单: ${user.orders} 单</div>
+                    </div>
+                </div>
+            `).join('');
+            
+            // 更新最后更新时间
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('zh-CN');
+        }
+        
+        // 刷新数据函数
+        function refreshData() {
+            const newData = generateMockData();
+            updateDashboard(newData);
+            
+            // 添加刷新动画效果
+            const refreshBtn = document.querySelector('.refresh-btn');
+            refreshBtn.textContent = '数据已更新';
+            refreshBtn.style.background = '#28a745';
+            
+            setTimeout(() => {
+                refreshBtn.textContent = '刷新数据';
+                refreshBtn.style.background = '#667eea';
+            }, 2000);
+        }
+        
+        // 页面加载时初始化数据
+        document.addEventListener('DOMContentLoaded', function() {
+            const initialData = generateMockData();
+            updateDashboard(initialData);
+            
+            // 每30秒自动刷新数据（模拟实时更新）
+            setInterval(refreshData, 30000);
+        });
+    </script>
+</body>
+</html>
