@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>众包平台管理系统</title>
+    <!-- iOS Safari 优化 -->
+    <meta name="apple-mobile-web-app-title" content="众包平台">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <!-- Android Chrome 优化 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="众包平台">
+    <meta name="theme-color" content="#667eea">
     <style>
         * {
             margin: 0;
@@ -304,7 +312,7 @@
             // 计算核心数据
             const todayOrders = userCount * tasksPerUser; // 今日总订单数
             const totalRevenue = todayOrders * ((taskPriceRange.min + taskPriceRange.max) / 2); // 总收入
-            const platformFee = Math.floor(totalRevenue * commissionRate); // 平台抽佣
+            const platformFee = totalRevenue * commissionRate; // 平台抽佣
             
             // 任务相关数据
             const availableTaskTypes = Math.floor(Math.random() * 30) + 50; // 50-80个可接任务
@@ -324,7 +332,7 @@
                 // 核心统计数据
                 userCount: userCount,
                 todayOrders: todayOrders,
-                totalRevenue: Math.floor(totalRevenue),
+                totalRevenue: totalRevenue,
                 platformFee: platformFee,
                 
                 // 任务统计数据（按份数计算）
@@ -417,8 +425,8 @@
             // 更新核心统计数据
             document.getElementById('userCount').textContent = data.userCount;
             document.getElementById('todayOrders').textContent = data.todayOrders;
-            document.getElementById('totalRevenue').textContent = `¥${data.totalRevenue.toLocaleString()}`;
-            document.getElementById('platformFee').textContent = `¥${data.platformFee.toLocaleString()}`;
+            document.getElementById('totalRevenue').textContent = `¥${data.totalRevenue.toFixed(1)}`;
+            document.getElementById('platformFee').textContent = `¥${data.platformFee.toFixed(1)}`;
             
             // 更新任务统计数据
             document.getElementById('availableTasks').textContent = data.availableTasks;
